@@ -98,14 +98,28 @@ if (autoRotate) {
   var animationName = (rotateSpeed > 0 ? 'spin' : 'spinRevert');
   ospin.style.animation = `${animationName} ${Math.abs(rotateSpeed)}s infinite linear`;
 }
-
 if (bgMusicURL) {
-  document.getElementById('music-container').innerHTML += `
-<audio src="${bgMusicURL}" ${bgMusicControls? 'controls': ''} autoplay loop>    
-<p>If you are reading this, it is because your browser does not support the audio element.</p>
-</audio>
-`;
+  const audioElement = document.createElement('audio');
+  audioElement.src = bgMusicURL;
+  audioElement.loop = true;
+  audioElement.autoplay = true;
+  audioElement.muted = true; // Initially muted for autoplay compliance
+
+  document.getElementById('music-container').appendChild(audioElement);
+
+  // Toggle playback on click
+  document.addEventListener('click', () => {
+    if (audioElement.muted) {
+      audioElement.muted = false; // Unmute and start playing
+      audioElement.play();
+    } else if (!audioElement.paused) {
+      audioElement.pause(); // Pause if it's playing
+    } else {
+      audioElement.play(); // Play if it's paused
+    }
+  });
 }
+
 
 document.onpointerdown = function (e) {
   clearInterval(odrag.timer);
